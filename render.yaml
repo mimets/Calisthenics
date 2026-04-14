@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: apphermann
+    runtime: node
+    plan: starter
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: JWT_SECRET
+        generateValue: true
+      - key: APP_USERNAME
+        sync: false
+      - key: APP_PASSWORD
+        sync: false
+      - key: DB_PATH
+        value: /var/data/apphermann.sqlite
+    disk:
+      name: apphermann-data
+      mountPath: /var/data
+      sizeGB: 1

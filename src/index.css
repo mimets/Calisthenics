@@ -1,0 +1,356 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --color-app-bg: #09111b;
+  --color-app-bg-soft: #111c28;
+  --color-app-panel: rgba(18, 28, 40, 0.58);
+  --color-app-panel-strong: rgba(18, 28, 40, 0.76);
+  --color-app-line: rgba(255, 255, 255, 0.12);
+  --color-app-line-strong: rgba(255, 255, 255, 0.18);
+  --color-app-text: #f5f8fc;
+  --color-app-muted: #98a9bc;
+  --color-app-accent: #81c4ff;
+  --color-app-accent-soft: rgba(129, 196, 255, 0.18);
+  --color-app-success: #78d8b0;
+  --color-app-danger: #ff8585;
+  --color-app-warning: #f4ca83;
+}
+
+:root {
+  color-scheme: dark;
+  font-family: 'Manrope', system-ui, sans-serif;
+  color: var(--color-app-text);
+  background:
+    radial-gradient(circle at 12% 10%, rgba(129, 196, 255, 0.22), transparent 24%),
+    radial-gradient(circle at 88% 18%, rgba(165, 230, 216, 0.14), transparent 20%),
+    radial-gradient(circle at 50% 100%, rgba(255, 255, 255, 0.08), transparent 35%),
+    linear-gradient(180deg, #08111b 0%, #0c1621 56%, #0b131d 100%);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  color: var(--color-app-text);
+  background:
+    radial-gradient(circle at 12% 10%, rgba(129, 196, 255, 0.22), transparent 24%),
+    radial-gradient(circle at 88% 18%, rgba(165, 230, 216, 0.14), transparent 20%),
+    radial-gradient(circle at 50% 100%, rgba(255, 255, 255, 0.08), transparent 35%),
+    linear-gradient(180deg, #08111b 0%, #0c1621 56%, #0b131d 100%);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-tap-highlight-color: transparent;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+input,
+select,
+textarea {
+  color-scheme: dark;
+}
+
+::selection {
+  background: rgba(129, 196, 255, 0.3);
+  color: white;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: linear-gradient(180deg, rgba(129, 196, 255, 0.9), rgba(129, 196, 255, 0.4));
+}
+
+.app-shell {
+  position: relative;
+  min-height: 100vh;
+  background: transparent;
+}
+
+.app-shell::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 72px 72px;
+  mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.42), transparent 92%);
+  pointer-events: none;
+}
+
+.app-main {
+  position: relative;
+  min-width: 0;
+  padding: 4.5rem 0.9rem 1rem;
+  z-index: 1;
+}
+
+.page-frame {
+  min-height: calc(100vh - 5.5rem);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.03));
+  backdrop-filter: blur(26px) saturate(150%);
+  -webkit-backdrop-filter: blur(26px) saturate(150%);
+  box-shadow:
+    0 18px 42px rgba(0, 0, 0, 0.24),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.surface-panel {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.045)),
+    rgba(18, 28, 40, 0.36);
+  backdrop-filter: blur(28px) saturate(150%);
+  -webkit-backdrop-filter: blur(28px) saturate(150%);
+  box-shadow:
+    0 16px 40px rgba(0, 0, 0, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.surface-soft {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.03)),
+    rgba(255, 255, 255, 0.02);
+  backdrop-filter: blur(18px) saturate(140%);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+}
+
+.section-kicker {
+  color: rgba(245, 248, 252, 0.58);
+  font-size: 0.69rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.display-font {
+  font-family: 'Manrope', system-ui, sans-serif;
+}
+
+.eyebrow-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.07);
+  color: #d8e9fb;
+  padding: 0.48rem 0.85rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+
+.button-primary {
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.08)),
+    rgba(129, 196, 255, 0.16);
+  color: white;
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  transition:
+    transform 180ms ease,
+    box-shadow 180ms ease,
+    background-color 180ms ease;
+  box-shadow:
+    0 10px 24px rgba(0, 0, 0, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+
+.button-primary:hover {
+  transform: translateY(-1px);
+  box-shadow:
+    0 14px 28px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.16);
+}
+
+.button-secondary {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0.03)),
+    rgba(255, 255, 255, 0.02);
+  color: var(--color-app-text);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  transition:
+    transform 180ms ease,
+    border-color 180ms ease,
+    background-color 180ms ease;
+}
+
+.button-secondary:hover {
+  transform: translateY(-1px);
+  border-color: rgba(255, 255, 255, 0.18);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.11), rgba(255, 255, 255, 0.05)),
+    rgba(255, 255, 255, 0.04);
+}
+
+.button-ghost {
+  color: rgba(245, 248, 252, 0.78);
+  transition:
+    color 180ms ease,
+    background-color 180ms ease,
+    transform 180ms ease;
+}
+
+.button-ghost:hover {
+  transform: translateY(-1px);
+  color: white;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.field-shell {
+  border: 1px solid rgba(255, 255, 255, 0.11);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.03)),
+    rgba(8, 15, 22, 0.22);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  transition:
+    border-color 180ms ease,
+    box-shadow 180ms ease,
+    background-color 180ms ease;
+}
+
+.field-shell:focus-within {
+  border-color: rgba(129, 196, 255, 0.34);
+  box-shadow: 0 0 0 4px rgba(129, 196, 255, 0.08);
+}
+
+.metric-strip {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0.03)),
+    rgba(255, 255, 255, 0.015);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.metric-value {
+  font-size: clamp(1.35rem, 6vw, 1.9rem);
+  font-weight: 700;
+  letter-spacing: -0.04em;
+}
+
+.status-dot {
+  display: inline-block;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 999px;
+  background: currentColor;
+  box-shadow: 0 0 14px currentColor;
+}
+
+.ambient-line {
+  position: relative;
+}
+
+.ambient-line::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.14), transparent);
+}
+
+.raise-in {
+  animation: raiseIn 420ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.glow-drift {
+  animation: glowDrift 16s ease-in-out infinite;
+}
+
+@keyframes raiseIn {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes glowDrift {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+
+  50% {
+    transform: translate3d(8px, -10px, 0) scale(1.03);
+  }
+}
+
+@media (min-width: 1024px) {
+  .app-shell {
+    display: flex;
+  }
+
+  .app-main {
+    flex: 1;
+    padding: 1rem 1rem 1rem 0;
+  }
+
+  .page-frame {
+    min-height: calc(100vh - 2rem);
+  }
+}
+
+@media (max-width: 768px) {
+  html {
+    font-size: 14px;
+  }
+
+  .app-main {
+    padding: 4.25rem 0.75rem 0.75rem;
+  }
+
+  .page-frame {
+    min-height: calc(100vh - 5rem);
+    border-radius: 1.6rem;
+  }
+}
