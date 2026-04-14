@@ -15,8 +15,4 @@ services:
       - key: APP_PASSWORD
         sync: false
       - key: DB_PATH
-        value: /var/data/apphermann.sqlite
-    disk:
-      name: apphermann-data
-      mountPath: /var/data
-      sizeGB: 1
+        value: /tmp/apphermann.json

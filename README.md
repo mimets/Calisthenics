@@ -1,6 +1,6 @@
 # AppHERMANN
 
-Gestionale React + Node con autenticazione lato server e database SQLite persistente su file.
+Gestionale React + Node con autenticazione lato server e storage JSON su file.
 
 ## Sicurezza applicata
 
@@ -12,14 +12,14 @@ Gestionale React + Node con autenticazione lato server e database SQLite persist
 - `helmet` con CSP attiva
 - service worker escluso dalle API per evitare cache di dati sensibili
 
-## Database
+## Storage
 
-Il database e un file SQLite.
+Lo storage e un file JSON lato server.
 
-- locale: `data/apphermann.sqlite`
-- Render: `/var/data/apphermann.sqlite` tramite persistent disk
+- locale: `data/apphermann.json`
+- Render Free demo: `/tmp/apphermann.json`
 
-Per un solo utente questa scelta e pragmatica: meno infrastruttura, persistenza reale e nessun database esterno da gestire. Su Render funziona solo con persistent disk; senza disk il file verrebbe perso al redeploy.
+Per una demo e la scelta piu semplice: niente dipendenze native, deploy facile su Render Free. Il file in `/tmp` non e persistente tra restart o redeploy.
 
 ## Setup locale
 
@@ -73,11 +73,11 @@ Serve configurare:
 - `APP_USERNAME`
 - `APP_PASSWORD` oppure `APP_PASSWORD_HASH`
 - `JWT_SECRET` viene generato automaticamente dal blueprint
-- disk persistente montato in `/var/data`
+- `DB_PATH=/tmp/apphermann.json`
 
-Se crei il servizio manualmente invece del blueprint:
+Se crei il servizio manualmente:
 
 - Build Command: `npm install && npm run build`
 - Start Command: `npm start`
-- Persistent Disk: mount path `/var/data`
-- Env var `DB_PATH=/var/data/apphermann.sqlite`
+- Health Check Path: `/api/health`
+- Env var `DB_PATH=/tmp/apphermann.json`

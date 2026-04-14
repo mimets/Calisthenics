@@ -1,22 +1,33 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import bcrypt from 'bcryptjs';
-import sqlite3 from 'sqlite3';
-import { open } from 'sqlite';
 
-const DEFAULT_DB_PATH = path.resolve(process.cwd(), 'data', 'apphermann.sqlite');
+const DEFAULT_DB_PATH = path.resolve(process.cwd(), 'data', 'apphermann.json');
 
-let dbPromise;
+let storePromise;
+let writeQueue = Promise.resolve();
 
 function resolveDbPath() {
   return path.resolve(process.cwd(), process.env.DB_PATH || DEFAULT_DB_PATH);
 }
 
-async function ensureAdminUser(db) {
-  const existingUser = await db.get('SELECT id FROM users LIMIT 1');
+function createEmptyStore() {
+  return {
+    users: [],
+    gyms: [],
+    clients: [],
+  };
+}
 
-  if (existingUser) {
-    return;
+async function writeStore(store) {
+  const filename = resolveDbPath();
+  await fs.mkdir(path.dirname(filename), { recursive: true });
+  await fs.writeFile(filename, JSON.stringify(store, null, 2), 'utf8');
+}
+
+async function ensureAdminUser(store) {
+  if (store.users.length > 0) {
+    return store;
   }
 
   const username = process.env.APP_USERNAME;
@@ -30,61 +41,182 @@ async function ensureAdminUser(db) {
     );
   }
 
-  await db.run('INSERT INTO users (username, password_hash) VALUES (?, ?)', [username.trim(), passwordHash]);
+  store.users.push({
+    id: 1,
+    username: username.trim(),
+    passwordHash,
+    createdAt: new Date().toISOString(),
+  });
+
+  return store;
 }
 
-async function initDb() {
+async function initStore() {
   const filename = resolveDbPath();
   await fs.mkdir(path.dirname(filename), { recursive: true });
 
-  const db = await open({
-    filename,
-    driver: sqlite3.Database,
-  });
+  let store = createEmptyStore();
 
-  await db.exec(`
-    PRAGMA foreign_keys = ON;
-    PRAGMA journal_mode = WAL;
-
-    CREATE TABLE IF NOT EXISTS users (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      username TEXT NOT NULL UNIQUE,
-      password_hash TEXT NOT NULL,
-      created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
-    );
-
-    CREATE TABLE IF NOT EXISTS gyms (
-      id TEXT PRIMARY KEY,
-      user_id INTEGER NOT NULL,
-      name TEXT NOT NULL,
-      created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
-      FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
-    );
-
-    CREATE TABLE IF NOT EXISTS clients (
-      id TEXT PRIMARY KEY,
-      gym_id TEXT NOT NULL,
-      first_name TEXT NOT NULL,
-      last_name TEXT NOT NULL,
-      price REAL NOT NULL CHECK (price >= 0),
-      frequency TEXT NOT NULL CHECK (frequency IN ('mensile', 'trimestrale', 'semestrale', 'annuale')),
-      created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
-      FOREIGN KEY (gym_id) REFERENCES gyms (id) ON DELETE CASCADE
-    );
-
-    CREATE INDEX IF NOT EXISTS idx_gyms_user_id ON gyms (user_id);
-    CREATE INDEX IF NOT EXISTS idx_clients_gym_id ON clients (gym_id);
-    CREATE INDEX IF NOT EXISTS idx_clients_last_name ON clients (last_name);
-  `);
-
-  await ensureAdminUser(db);
-  return db;
-}
-
-export function getDb() {
-  if (!dbPromise) {
-    dbPromise = initDb();
+  try {
+    const raw = await fs.readFile(filename, 'utf8');
+    store = JSON.parse(raw);
+  } catch (error) {
+    if (error.code !== 'ENOENT') {
+      throw error;
+    }
   }
 
-  return dbPromise;
+  store = await ensureAdminUser({
+    users: Array.isArray(store.users) ? store.users : [],
+    gyms: Array.isArray(store.gyms) ? store.gyms : [],
+    clients: Array.isArray(store.clients) ? store.clients : [],
+  });
+
+  await writeStore(store);
+  return store;
+}
+
+async function getStore() {
+  if (!storePromise) {
+    storePromise = initStore();
+  }
+
+  return storePromise;
+}
+
+async function persist(mutator) {
+  writeQueue = writeQueue.then(async () => {
+    const store = await getStore();
+    const result = await mutator(store);
+    await writeStore(store);
+    return result;
+  });
+
+  return writeQueue;
+}
+
+export async function ensureStoreReady() {
+  await getStore();
+}
+
+export async function findUserByUsername(username) {
+  const store = await getStore();
+  return store.users.find((user) => user.username === username) || null;
+}
+
+export async function listGymsForUser(userId) {
+  const store = await getStore();
+  const gyms = store.gyms
+    .filter((gym) => gym.userId === userId)
+    .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
+    .map((gym) => ({
+      id: gym.id,
+      name: gym.name,
+      clients: store.clients
+        .filter((client) => client.gymId === gym.id)
+        .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
+        .map((client) => ({
+          id: client.id,
+          gymId: client.gymId,
+          firstName: client.firstName,
+          lastName: client.lastName,
+          price: Number(client.price),
+          frequency: client.frequency,
+        })),
+    }));
+
+  return gyms;
+}
+
+export async function createGym(userId, gym) {
+  return persist((store) => {
+    const row = {
+      id: gym.id,
+      userId,
+      name: gym.name,
+      createdAt: new Date().toISOString(),
+    };
+
+    store.gyms.push(row);
+    return { id: row.id, name: row.name, clients: [] };
+  });
+}
+
+export async function updateGym(userId, gymId, name) {
+  return persist((store) => {
+    const gym = store.gyms.find((row) => row.id === gymId && row.userId === userId);
+
+    if (!gym) {
+      return false;
+    }
+
+    gym.name = name;
+    return true;
+  });
+}
+
+export async function deleteGym(userId, gymId) {
+  return persist((store) => {
+    const gymIndex = store.gyms.findIndex((row) => row.id === gymId && row.userId === userId);
+
+    if (gymIndex === -1) {
+      return false;
+    }
+
+    store.gyms.splice(gymIndex, 1);
+    store.clients = store.clients.filter((client) => client.gymId !== gymId);
+    return true;
+  });
+}
+
+export async function gymExistsForUser(userId, gymId) {
+  const store = await getStore();
+  return store.gyms.some((gym) => gym.id === gymId && gym.userId === userId);
+}
+
+export async function createClient(gymId, client) {
+  return persist((store) => {
+    store.clients.push({
+      id: client.id,
+      gymId,
+      firstName: client.firstName,
+      lastName: client.lastName,
+      price: client.price,
+      frequency: client.frequency,
+      createdAt: new Date().toISOString(),
+    });
+
+    return true;
+  });
+}
+
+export async function updateClient(userId, clientId, payload) {
+  return persist((store) => {
+    const allowedGymIds = new Set(store.gyms.filter((gym) => gym.userId === userId).map((gym) => gym.id));
+    const client = store.clients.find((row) => row.id === clientId && allowedGymIds.has(row.gymId));
+
+    if (!client) {
+      return false;
+    }
+
+    client.firstName = payload.firstName;
+    client.lastName = payload.lastName;
+    client.price = payload.price;
+    client.frequency = payload.frequency;
+    return true;
+  });
+}
+
+export async function deleteClient(userId, clientId) {
+  return persist((store) => {
+    const allowedGymIds = new Set(store.gyms.filter((gym) => gym.userId === userId).map((gym) => gym.id));
+    const clientIndex = store.clients.findIndex((row) => row.id === clientId && allowedGymIds.has(row.gymId));
+
+    if (clientIndex === -1) {
+      return false;
+    }
+
+    store.clients.splice(clientIndex, 1);
+    return true;
+  });
 }

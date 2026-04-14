@@ -1,6 +1,6 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import { getDb } from './db.js';
+import { findUserByUsername } from './db.js';
 
 export const AUTH_COOKIE_NAME = 'hm_session';
 
@@ -14,13 +14,10 @@ function getJwtSecret() {
   return secret;
 }
 
-export async function findUserByUsername(username) {
-  const db = await getDb();
-  return db.get('SELECT id, username, password_hash FROM users WHERE username = ?', [username]);
-}
+export { findUserByUsername };
 
 export async function validatePassword(user, password) {
-  return bcrypt.compare(password, user.password_hash);
+  return bcrypt.compare(password, user.passwordHash);
 }
 
 export function signSession(user) {
