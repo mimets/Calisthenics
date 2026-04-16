@@ -3,13 +3,16 @@ import { Building2, LoaderCircle, Sparkles } from 'lucide-react';
 import {
   createGym,
   createClient,
+  createExpense,
   deleteClient,
+  deleteExpense,
   deleteGym,
   getGyms,
   getSession,
   loginRequest,
   logoutRequest,
   updateClient,
+  updateExpense,
   updateGym as updateGymRequest,
 } from './api';
 import Login from './components/Login';
@@ -174,8 +177,23 @@ export default function App() {
     await refreshData();
   };
 
+  const handleAddExpense = async (gymId, payload) => {
+    await runAction(() => createExpense(gymId, payload));
+    await refreshData();
+  };
+
+  const handleUpdateExpense = async (expenseId, payload) => {
+    await runAction(() => updateExpense(expenseId, payload));
+    await refreshData();
+  };
+
   const handleDeleteClient = async (clientId) => {
     await runAction(() => deleteClient(clientId));
+    await refreshData();
+  };
+
+  const handleDeleteExpense = async (expenseId) => {
+    await runAction(() => deleteExpense(expenseId));
     await refreshData();
   };
 
@@ -224,10 +242,13 @@ export default function App() {
                 busy={busy}
                 gym={currentGym}
                 onAddClient={handleAddClient}
+                onAddExpense={handleAddExpense}
                 onBack={() => setCurrentView('dashboard')}
                 onDeleteClient={handleDeleteClient}
+                onDeleteExpense={handleDeleteExpense}
                 onDeleteGym={handleDeleteGym}
                 onUpdateClient={handleUpdateClient}
+                onUpdateExpense={handleUpdateExpense}
                 onUpdateGym={handleUpdateGym}
               />
             ) : (

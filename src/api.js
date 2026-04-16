@@ -78,3 +78,23 @@ export function deleteClient(clientId) {
     method: 'DELETE',
   });
 }
+
+export function createExpense(gymId, payload) {
+  return request(`/api/gyms/${gymId}/expenses`, {
+    method: 'POST',
+    body: JSON.stringify(payload),
+  });
+}
+
+export function updateExpense(expenseId, payload) {
+  return request(`/api/expenses/${expenseId}`, {
+    method: 'PATCH',
+    body: JSON.stringify(payload),
+  });
+}
+
+export function deleteExpense(expenseId) {
+  return request(`/api/expenses/${expenseId}`, {
+    method: 'DELETE',
+  });
+}

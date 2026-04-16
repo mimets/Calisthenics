@@ -16,6 +16,7 @@ function createEmptyStore() {
     users: [],
     gyms: [],
     clients: [],
+    expenses: [],
   };
 }
 
@@ -70,6 +71,7 @@ async function initStore() {
     users: Array.isArray(store.users) ? store.users : [],
     gyms: Array.isArray(store.gyms) ? store.gyms : [],
     clients: Array.isArray(store.clients) ? store.clients : [],
+    expenses: Array.isArray(store.expenses) ? store.expenses : [],
   });
 
   await writeStore(store);
@@ -123,6 +125,16 @@ export async function listGymsForUser(userId) {
           price: Number(client.price),
           frequency: client.frequency,
         })),
+      expenses: store.expenses
+        .filter((expense) => expense.gymId === gym.id)
+        .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
+        .map((expense) => ({
+          id: expense.id,
+          gymId: expense.gymId,
+          label: expense.label,
+          amount: Number(expense.amount),
+          category: expense.category,
+        })),
     }));
 
   return gyms;
@@ -138,7 +150,7 @@ export async function createGym(userId, gym) {
     };
 
     store.gyms.push(row);
-    return { id: row.id, name: row.name, clients: [] };
+    return { id: row.id, name: row.name, clients: [], expenses: [] };
   });
 }
 
@@ -165,6 +177,7 @@ export async function deleteGym(userId, gymId) {
 
     store.gyms.splice(gymIndex, 1);
     store.clients = store.clients.filter((client) => client.gymId !== gymId);
+    store.expenses = store.expenses.filter((expense) => expense.gymId !== gymId);
     return true;
   });
 }
@@ -190,6 +203,21 @@ export async function createClient(gymId, client) {
   });
 }
 
+export async function createExpense(gymId, expense) {
+  return persist((store) => {
+    store.expenses.push({
+      id: expense.id,
+      gymId,
+      label: expense.label,
+      amount: expense.amount,
+      category: expense.category,
+      createdAt: new Date().toISOString(),
+    });
+
+    return true;
+  });
+}
+
 export async function updateClient(userId, clientId, payload) {
   return persist((store) => {
     const allowedGymIds = new Set(store.gyms.filter((gym) => gym.userId === userId).map((gym) => gym.id));
@@ -207,6 +235,22 @@ export async function updateClient(userId, clientId, payload) {
   });
 }
 
+export async function updateExpense(userId, expenseId, payload) {
+  return persist((store) => {
+    const allowedGymIds = new Set(store.gyms.filter((gym) => gym.userId === userId).map((gym) => gym.id));
+    const expense = store.expenses.find((row) => row.id === expenseId && allowedGymIds.has(row.gymId));
+
+    if (!expense) {
+      return false;
+    }
+
+    expense.label = payload.label;
+    expense.amount = payload.amount;
+    expense.category = payload.category;
+    return true;
+  });
+}
+
 export async function deleteClient(userId, clientId) {
   return persist((store) => {
     const allowedGymIds = new Set(store.gyms.filter((gym) => gym.userId === userId).map((gym) => gym.id));
@@ -217,6 +261,20 @@ export async function deleteClient(userId, clientId) {
     }
 
     store.clients.splice(clientIndex, 1);
+    return true;
+  });
+}
+
+export async function deleteExpense(userId, expenseId) {
+  return persist((store) => {
+    const allowedGymIds = new Set(store.gyms.filter((gym) => gym.userId === userId).map((gym) => gym.id));
+    const expenseIndex = store.expenses.findIndex((row) => row.id === expenseId && allowedGymIds.has(row.gymId));
+
+    if (expenseIndex === -1) {
+      return false;
+    }
+
+    store.expenses.splice(expenseIndex, 1);
     return true;
   });
 }

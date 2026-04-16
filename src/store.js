@@ -10,18 +10,35 @@ export function calcFinancials(lordo) {
   };
 }
 
-export function getGymTotals(clients) {
+export function getExpenseTotals(expenses) {
+  return (expenses || []).reduce((sum, expense) => sum + (Number(expense.amount) || 0), 0);
+}
+
+export function getGymTotals(clients, expenses = []) {
   const totalLordo = clients.reduce((sum, client) => sum + (Number(client.price) || 0), 0);
-  return calcFinancials(totalLordo);
+  const revenue = calcFinancials(totalLordo);
+  const totalExpenses = getExpenseTotals(expenses);
+
+  return {
+    ...revenue,
+    expenses: Math.round(totalExpenses * 100) / 100,
+    balance: Math.round((revenue.netto - totalExpenses) * 100) / 100,
+  };
 }
 
 export function getGrandTotals(gyms) {
   const totalLordo = gyms.reduce((sum, gym) => {
     return sum + gym.clients.reduce((clientSum, client) => clientSum + (Number(client.price) || 0), 0);
   }, 0);
+  const totalExpenses = gyms.reduce((sum, gym) => {
+    return sum + getExpenseTotals(gym.expenses || []);
+  }, 0);
+  const revenue = calcFinancials(totalLordo);
 
   return {
-    ...calcFinancials(totalLordo),
+    ...revenue,
+    expenses: Math.round(totalExpenses * 100) / 100,
+    balance: Math.round((revenue.netto - totalExpenses) * 100) / 100,
     totalClients: gyms.reduce((sum, gym) => sum + gym.clients.length, 0),
     totalGyms: gyms.length,
   };

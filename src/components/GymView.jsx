@@ -6,6 +6,7 @@ import {
   Edit3,
   LoaderCircle,
   Plus,
+  Receipt,
   Search,
   Trash2,
   Users,
@@ -20,6 +21,16 @@ const FREQUENCY_OPTIONS = [
   { value: 'trimestrale', label: 'Trimestrale' },
   { value: 'semestrale', label: 'Semestrale' },
   { value: 'annuale', label: 'Annuale' },
+];
+
+const EXPENSE_CATEGORY_OPTIONS = [
+  'Affitto',
+  'Bollette',
+  'Attrezzatura',
+  'Pulizie',
+  'Marketing',
+  'Personale',
+  'Generale',
 ];
 
 const FREQUENCY_CLASSNAMES = {
@@ -168,6 +179,117 @@ function AddClientForm({ busy, gymId, onAdd }) {
   );
 }
 
+function AddExpenseForm({ busy, gymId, onAdd }) {
+  const [open, setOpen] = useState(false);
+  const [form, setForm] = useState({
+    label: '',
+    amount: '',
+    category: 'Affitto',
+  });
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+
+    if (!form.label.trim() || !form.amount) {
+      return;
+    }
+
+    await onAdd(gymId, {
+      label: form.label.trim(),
+      amount: Number(form.amount) || 0,
+      category: form.category,
+    });
+
+    setForm({
+      label: '',
+      amount: '',
+      category: 'Affitto',
+    });
+    setOpen(false);
+  };
+
+  if (!open) {
+    return (
+      <button
+        className="button-secondary inline-flex items-center justify-center gap-2 rounded-full px-5 py-3 text-sm font-semibold"
+        onClick={() => setOpen(true)}
+        type="button"
+      >
+        <Plus className="h-4 w-4" />
+        Aggiungi costo
+      </button>
+    );
+  }
+
+  return (
+    <form className="surface-soft rounded-[1.35rem] p-4" onSubmit={handleSubmit}>
+      <div className="mb-4 flex items-center justify-between gap-3">
+        <h3 className="text-lg font-semibold tracking-[-0.04em] text-app-text">Nuovo costo</h3>
+        <button className="button-secondary rounded-full p-2.5" onClick={() => setOpen(false)} type="button">
+          <X className="h-4 w-4" />
+        </button>
+      </div>
+
+      <div className="grid gap-3 sm:grid-cols-3">
+        <div className="field-shell rounded-[1rem] px-4 py-3 sm:col-span-2">
+          <input
+            autoFocus
+            className="w-full bg-transparent text-sm text-app-text outline-none placeholder:text-app-muted/55"
+            onChange={(event) => setForm({ ...form, label: event.target.value })}
+            placeholder="Affitto sala, bolletta luce..."
+            required
+            value={form.label}
+          />
+        </div>
+        <div className="field-shell rounded-[1rem] px-4 py-3">
+          <input
+            className="w-full bg-transparent text-sm text-app-text outline-none placeholder:text-app-muted/55"
+            min="0"
+            onChange={(event) => setForm({ ...form, amount: event.target.value })}
+            placeholder="Importo"
+            required
+            step="0.01"
+            type="number"
+            value={form.amount}
+          />
+        </div>
+        <div className="field-shell flex items-center rounded-[1rem] px-4 py-3 sm:col-span-3">
+          <select
+            className="w-full appearance-none bg-transparent text-sm text-app-text outline-none"
+            onChange={(event) => setForm({ ...form, category: event.target.value })}
+            value={form.category}
+          >
+            {EXPENSE_CATEGORY_OPTIONS.map((option) => (
+              <option key={option} value={option}>
+                {option}
+              </option>
+            ))}
+          </select>
+          <ChevronDown className="h-4 w-4 text-app-muted" />
+        </div>
+      </div>
+
+      <button
+        className="button-primary mt-4 inline-flex items-center justify-center gap-2 rounded-full px-5 py-3 text-sm font-semibold"
+        disabled={busy}
+        type="submit"
+      >
+        {busy ? (
+          <>
+            <LoaderCircle className="h-4 w-4 animate-spin" />
+            Salvataggio...
+          </>
+        ) : (
+          <>
+            <Check className="h-4 w-4" />
+            Salva costo
+          </>
+        )}
+      </button>
+    </form>
+  );
+}
+
 function ClientEditor({ busy, form, onCancel, onChange, onSave }) {
   return (
     <div className="surface-soft grid gap-3 rounded-[1.25rem] border border-app-line p-4 sm:grid-cols-2">
@@ -211,6 +333,53 @@ function ClientEditor({ busy, form, onCancel, onChange, onSave }) {
         <ChevronDown className="h-4 w-4 text-app-muted" />
       </div>
       <div className="flex gap-2 sm:col-span-2">
+        <button className="button-primary rounded-full px-4 py-3 text-sm font-semibold" disabled={busy} onClick={onSave} type="button">
+          {busy ? 'Salvataggio...' : 'Salva'}
+        </button>
+        <button className="button-secondary rounded-full px-4 py-3 text-sm font-semibold" disabled={busy} onClick={onCancel} type="button">
+          Annulla
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function ExpenseEditor({ busy, form, onCancel, onChange, onSave }) {
+  return (
+    <div className="surface-soft grid gap-3 rounded-[1.25rem] border border-app-line p-4 sm:grid-cols-3">
+      <div className="field-shell rounded-[1rem] px-4 py-3 sm:col-span-2">
+        <input
+          autoFocus
+          className="w-full bg-transparent text-sm text-app-text outline-none"
+          onChange={(event) => onChange({ ...form, label: event.target.value })}
+          value={form.label}
+        />
+      </div>
+      <div className="field-shell rounded-[1rem] px-4 py-3">
+        <input
+          className="w-full bg-transparent text-sm text-app-text outline-none"
+          min="0"
+          onChange={(event) => onChange({ ...form, amount: event.target.value })}
+          step="0.01"
+          type="number"
+          value={form.amount}
+        />
+      </div>
+      <div className="field-shell flex items-center rounded-[1rem] px-4 py-3 sm:col-span-3">
+        <select
+          className="w-full appearance-none bg-transparent text-sm text-app-text outline-none"
+          onChange={(event) => onChange({ ...form, category: event.target.value })}
+          value={form.category}
+        >
+          {EXPENSE_CATEGORY_OPTIONS.map((option) => (
+            <option key={option} value={option}>
+              {option}
+            </option>
+          ))}
+        </select>
+        <ChevronDown className="h-4 w-4 text-app-muted" />
+      </div>
+      <div className="flex gap-2 sm:col-span-3">
         <button className="button-primary rounded-full px-4 py-3 text-sm font-semibold" disabled={busy} onClick={onSave} type="button">
           {busy ? 'Salvataggio...' : 'Salva'}
         </button>
@@ -329,14 +498,107 @@ function ClientList({ busy, clients, onDelete, onEdit }) {
   );
 }
 
+function ExpenseList({ busy, expenses, onDelete, onEdit }) {
+  const [editingId, setEditingId] = useState(null);
+  const [draft, setDraft] = useState(null);
+
+  const startEdit = (expense) => {
+    setEditingId(expense.id);
+    setDraft({
+      ...expense,
+      amount: String(expense.amount),
+    });
+  };
+
+  const cancelEdit = () => {
+    setEditingId(null);
+    setDraft(null);
+  };
+
+  const saveEdit = async () => {
+    if (!draft.label.trim()) {
+      return;
+    }
+
+    await onEdit(draft.id, {
+      label: draft.label.trim(),
+      amount: Number(draft.amount) || 0,
+      category: draft.category,
+    });
+
+    cancelEdit();
+  };
+
+  return (
+    <div className="space-y-3">
+      {expenses.map((expense) => {
+        if (editingId === expense.id && draft) {
+          return (
+            <ExpenseEditor
+              busy={busy}
+              form={draft}
+              key={expense.id}
+              onCancel={cancelEdit}
+              onChange={setDraft}
+              onSave={saveEdit}
+            />
+          );
+        }
+
+        return (
+          <article className="surface-soft rounded-[1.25rem] px-4 py-4" key={expense.id}>
+            <div className="flex items-start justify-between gap-3">
+              <div className="min-w-0">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-[0.9rem] bg-amber-100 text-amber-700">
+                    <Receipt className="h-4 w-4" />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="truncate text-base font-semibold text-app-text">{expense.label}</p>
+                    <span className="mt-2 inline-flex rounded-full bg-white px-3 py-1 text-xs font-semibold text-app-muted">
+                      {expense.category}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <button className="button-secondary rounded-full p-2.5" disabled={busy} onClick={() => startEdit(expense)} type="button">
+                  <Edit3 className="h-4 w-4" />
+                </button>
+                <button
+                  className="rounded-full border border-red-200 bg-red-50 p-2.5 text-red-700 transition hover:bg-red-100 disabled:opacity-60"
+                  disabled={busy}
+                  onClick={() => onDelete(expense.id)}
+                  type="button"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </button>
+              </div>
+            </div>
+
+            <div className="mt-4">
+              <p className="text-[0.68rem] uppercase tracking-[0.16em] text-app-muted">Importo</p>
+              <p className="mt-1 text-sm font-semibold text-app-danger">{formatCurrency(expense.amount)}</p>
+            </div>
+          </article>
+        );
+      })}
+    </div>
+  );
+}
+
 export default function GymView({
   busy,
   gym,
   onAddClient,
+  onAddExpense,
   onBack,
   onDeleteClient,
+  onDeleteExpense,
   onDeleteGym,
   onUpdateClient,
+  onUpdateExpense,
   onUpdateGym,
 }) {
   const [editingName, setEditingName] = useState(false);
@@ -344,7 +606,7 @@ export default function GymView({
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [search, setSearch] = useState('');
 
-  const totals = getGymTotals(gym.clients);
+  const totals = getGymTotals(gym.clients, gym.expenses || []);
 
   const saveGymName = async () => {
     if (!gymName.trim()) {
@@ -446,11 +708,12 @@ export default function GymView({
           </div>
         </div>
 
-        <div className="mt-4 grid grid-cols-2 gap-3 lg:grid-cols-4">
+        <div className="mt-4 grid grid-cols-2 gap-3 lg:grid-cols-5">
           <StatCard icon={Users} label="Clienti" value={gym.clients.length} />
           <StatCard icon={Wallet} label="Lordo" value={formatCurrency(totals.lordo)} />
           <StatCard icon={Wallet} label="Netto" value={formatCurrency(totals.netto)} />
-          <StatCard icon={Wallet} label="IVA" value={formatCurrency(totals.iva)} />
+          <StatCard icon={Receipt} label="Costi" value={formatCurrency(totals.expenses)} />
+          <StatCard icon={Wallet} label="Saldo" value={formatCurrency(totals.balance)} />
         </div>
       </section>
 
@@ -500,6 +763,41 @@ export default function GymView({
             </div>
           ) : (
             <ClientList busy={busy} clients={filteredClients} onDelete={onDeleteClient} onEdit={onUpdateClient} />
+          )}
+        </div>
+      </section>
+
+      <section className="surface-panel raise-in rounded-[1.5rem] px-4 py-4 lg:px-5">
+        <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+          <div>
+            <p className="section-kicker">Costi palestra</p>
+            <h3 className="mt-2 text-xl font-semibold tracking-[-0.04em] text-app-text">Spese e uscite</h3>
+            <p className="mt-2 max-w-xl text-sm leading-6 text-app-muted">
+              Registra affitto, bollette, attrezzatura e ogni altro costo ricorrente o extra.
+            </p>
+          </div>
+
+          <AddExpenseForm busy={busy} gymId={gym.id} onAdd={onAddExpense} />
+        </div>
+
+        <div className="mt-4">
+          {!gym.expenses?.length ? (
+            <div className="surface-soft rounded-[1.25rem] px-5 py-8 text-center">
+              <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-[1rem] bg-amber-100 text-amber-700">
+                <Receipt className="h-5 w-5" />
+              </div>
+              <h4 className="mt-4 text-lg font-semibold tracking-[-0.04em] text-app-text">Nessun costo registrato</h4>
+              <p className="mt-2 text-sm leading-6 text-app-muted">
+                Inserisci le spese della palestra per avere un saldo piu realistico.
+              </p>
+            </div>
+          ) : (
+            <ExpenseList
+              busy={busy}
+              expenses={gym.expenses}
+              onDelete={onDeleteExpense}
+              onEdit={onUpdateExpense}
+            />
           )}
         </div>
       </section>

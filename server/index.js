@@ -17,13 +17,16 @@ import {
 } from './auth.js';
 import {
   createClient,
+  createExpense,
   createGym,
   deleteClient,
+  deleteExpense,
   deleteGym,
   ensureStoreReady,
   gymExistsForUser,
   listGymsForUser,
   updateClient,
+  updateExpense,
   updateGym,
 } from './db.js';
 
@@ -68,6 +71,26 @@ function validateClientPayload(body) {
     lastName: lastName.slice(0, 80),
     frequency,
     price: Math.round(price * 100) / 100,
+  };
+}
+
+function validateExpensePayload(body) {
+  const label = typeof body.label === 'string' ? body.label.trim() : '';
+  const category = typeof body.category === 'string' ? body.category.trim() : '';
+  const amount = Number(body.amount);
+
+  if (!label) {
+    throw new Error('Nome costo non valido');
+  }
+
+  if (!Number.isFinite(amount) || amount < 0) {
+    throw new Error('Importo costo non valido');
+  }
+
+  return {
+    label: label.slice(0, 120),
+    category: category.slice(0, 80) || 'Generale',
+    amount: Math.round(amount * 100) / 100,
   };
 }
 
@@ -217,6 +240,25 @@ app.post('/api/gyms/:gymId/clients', setNoStore, requireAuth, async (request, re
   response.status(201).json({ ok: true, id });
 });
 
+app.post('/api/gyms/:gymId/expenses', setNoStore, requireAuth, async (request, response) => {
+  const gymExists = await gymExistsForUser(request.auth.userId, request.params.gymId);
+
+  if (!gymExists) {
+    response.status(404).json({ error: 'Palestra non trovata' });
+    return;
+  }
+
+  const payload = validateExpensePayload(request.body);
+  const id = crypto.randomUUID();
+
+  await createExpense(request.params.gymId, {
+    id,
+    ...payload,
+  });
+
+  response.status(201).json({ ok: true, id });
+});
+
 app.patch('/api/clients/:clientId', setNoStore, requireAuth, async (request, response) => {
   const updated = await updateClient(request.auth.userId, request.params.clientId, validateClientPayload(request.body));
 
@@ -233,6 +275,28 @@ app.delete('/api/clients/:clientId', setNoStore, requireAuth, async (request, re
 
   if (!deleted) {
     response.status(404).json({ error: 'Cliente non trovato' });
+    return;
+  }
+
+  response.json({ ok: true });
+});
+
+app.patch('/api/expenses/:expenseId', setNoStore, requireAuth, async (request, response) => {
+  const updated = await updateExpense(request.auth.userId, request.params.expenseId, validateExpensePayload(request.body));
+
+  if (!updated) {
+    response.status(404).json({ error: 'Costo non trovato' });
+    return;
+  }
+
+  response.json({ ok: true });
+});
+
+app.delete('/api/expenses/:expenseId', setNoStore, requireAuth, async (request, response) => {
+  const deleted = await deleteExpense(request.auth.userId, request.params.expenseId);
+
+  if (!deleted) {
+    response.status(404).json({ error: 'Costo non trovato' });
     return;
   }
 
