@@ -1,0 +1,6 @@
+{
+  "appId": "com.mimets.calisthenics",
+  "appName": "Calisthenics Manager",
+  "webDir": "dist",
+  "bundledWebRuntime": false
+}

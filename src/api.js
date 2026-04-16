@@ -1,5 +1,15 @@
+const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || '').trim().replace(/\/$/, '');
+
+function resolveApiUrl(path) {
+  if (/^https?:\/\//.test(path)) {
+    return path;
+  }
+
+  return API_BASE_URL ? `${API_BASE_URL}${path}` : path;
+}
+
 async function request(path, options = {}) {
-  const response = await fetch(path, {
+  const response = await fetch(resolveApiUrl(path), {
     credentials: 'include',
     headers: {
       'Content-Type': 'application/json',

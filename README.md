@@ -64,6 +64,35 @@ npm run build
 npm start
 ```
 
+## Android e Windows
+
+Il progetto ora e predisposto anche per wrapper app:
+
+- Android con Capacitor
+- Windows con Electron
+
+Prima di usarli conviene impostare un backend online raggiungibile dall'app:
+
+```env
+VITE_API_BASE_URL=https://tuo-backend.example.com
+APP_CORS_ORIGINS=http://localhost,capacitor://localhost,null,https://tuo-dominio-app.com
+APP_CROSS_ORIGIN_AUTH=true
+```
+
+Script utili:
+
+```bash
+npm run build:android
+npm run android:open
+npm run build:windows
+```
+
+Note:
+
+- Android richiede Android Studio per compilare l'APK o l'AAB.
+- Windows genera un pacchetto Electron nella cartella `release/`.
+- Gli artefatti `release/` non vengono versionati nel repo.
+
 ## Deploy su Render
 
 Nel repo c'e `render.yaml`.

@@ -41,11 +41,12 @@ export function verifySessionToken(token) {
 }
 
 export function getCookieOptions() {
-  const secure = process.env.NODE_ENV === 'production';
+  const crossOriginAuth = process.env.APP_CROSS_ORIGIN_AUTH === 'true';
+  const secure = process.env.NODE_ENV === 'production' || crossOriginAuth;
 
   return {
     httpOnly: true,
-    sameSite: 'strict',
+    sameSite: crossOriginAuth ? 'none' : 'strict',
     secure,
     path: '/',
     maxAge: 1000 * 60 * 60 * 24 * 7,

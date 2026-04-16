@@ -3,6 +3,7 @@ import crypto from 'node:crypto';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import cookieParser from 'cookie-parser';
+import cors from 'cors';
 import express from 'express';
 import rateLimit from 'express-rate-limit';
 import helmet from 'helmet';
@@ -34,6 +35,13 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const distDir = path.resolve(__dirname, '..', 'dist');
 const app = express();
 const port = Number(process.env.PORT || 3001);
+
+function getAllowedOrigins() {
+  return (process.env.APP_CORS_ORIGINS || '')
+    .split(',')
+    .map((origin) => origin.trim())
+    .filter(Boolean);
+}
 
 function setNoStore(_request, response, next) {
   response.setHeader('Cache-Control', 'no-store');
@@ -119,6 +127,26 @@ app.use(
       },
     },
     crossOriginEmbedderPolicy: false,
+  }),
+);
+app.use(
+  cors({
+    origin(origin, callback) {
+      const allowedOrigins = getAllowedOrigins();
+
+      if (
+        !origin ||
+        origin === 'null' ||
+        allowedOrigins.length === 0 ||
+        allowedOrigins.includes(origin)
+      ) {
+        callback(null, true);
+        return;
+      }
+
+      callback(new Error('Origin non consentita'));
+    },
+    credentials: true,
   }),
 );
 app.use(cookieParser());
