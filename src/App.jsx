@@ -34,14 +34,14 @@ function PageHeader({ currentGym, gymCount }) {
             </h1>
             <p className="mt-2 max-w-2xl text-sm leading-6 text-app-muted">
               {currentGym
-                ? 'Clienti e quote della sede selezionata in una vista piu semplice.'
-                : 'Gestisci palestre, clienti e numeri con auth lato server e persistenza su database.'}
+                ? 'Clienti, quote e riepiloghi della sede selezionata in una vista piu chiara.'
+                : 'Gestisci palestre, clienti e numeri in un workspace ordinato, veloce e facile da consultare.'}
             </p>
           </div>
         </div>
 
         <div className="surface-soft flex items-center gap-3 rounded-[1.25rem] px-4 py-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-[1rem] bg-app-accent/18 text-app-accent">
+          <div className="flex h-10 w-10 items-center justify-center rounded-[1rem] bg-app-accent/12 text-app-accent">
             <Building2 className="h-4 w-4" />
           </div>
           <div>
@@ -193,7 +193,7 @@ export default function App() {
   return (
     <div className="app-shell">
       <div className="absolute left-[-7rem] top-[-5rem] h-56 w-56 rounded-full bg-app-accent/18 blur-[90px] glow-drift" />
-      <div className="absolute bottom-[-6rem] right-[-4rem] h-48 w-48 rounded-full bg-emerald-300/12 blur-[90px] glow-drift" />
+      <div className="absolute bottom-[-6rem] right-[-4rem] h-48 w-48 rounded-full bg-amber-200/35 blur-[90px] glow-drift" />
 
       <Sidebar
         currentView={currentView}
@@ -208,7 +208,7 @@ export default function App() {
 
           <main className="px-4 pb-5 lg:px-8 lg:pb-8">
             {error && (
-              <div className="mb-4 rounded-[1rem] border border-red-300/14 bg-red-400/10 px-4 py-3 text-sm text-red-100">
+              <div className="mb-4 rounded-[1rem] border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
                 {error}
               </div>
             )}

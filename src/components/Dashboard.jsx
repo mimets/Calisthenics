@@ -8,7 +8,7 @@ function StatCard({ icon, label, value, helper }) {
   return (
     <div className="metric-strip rounded-[1.35rem] p-4">
       <div className="mb-3 flex items-center justify-between">
-        <div className="flex h-10 w-10 items-center justify-center rounded-[0.95rem] bg-white/10 text-app-accent">
+        <div className="flex h-10 w-10 items-center justify-center rounded-[0.95rem] bg-app-accent/12 text-app-accent">
           <IconComponent className="h-4 w-4" />
         </div>
         <span className="text-[0.68rem] font-semibold uppercase tracking-[0.18em] text-app-muted">
@@ -24,7 +24,7 @@ function StatCard({ icon, label, value, helper }) {
 function EmptyState({ onAddGym }) {
   return (
     <div className="surface-panel rounded-[1.5rem] px-5 py-8 text-center">
-      <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-[1rem] bg-white/10 text-app-accent">
+      <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-[1rem] bg-app-accent/12 text-app-accent">
         <Building2 className="h-6 w-6" />
       </div>
       <h3 className="mt-4 text-xl font-semibold tracking-[-0.04em] text-app-text">Nessuna palestra</h3>
@@ -55,6 +55,9 @@ export default function Dashboard({ gyms, onAddGym, onNavigate }) {
             <h2 className="mt-2 text-2xl font-semibold tracking-[-0.04em] text-app-text">
               Panoramica veloce
             </h2>
+            <p className="mt-2 max-w-xl text-sm leading-6 text-app-muted">
+              Tutto quello che serve per leggere la situazione generale in pochi secondi.
+            </p>
           </div>
 
           <button
@@ -93,10 +96,13 @@ export default function Dashboard({ gyms, onAddGym, onNavigate }) {
       {gyms.length === 0 ? (
         <EmptyState onAddGym={onAddGym} />
       ) : (
-        <section className="surface-panel raise-in rounded-[1.5rem] overflow-hidden">
+        <section className="surface-panel raise-in overflow-hidden rounded-[1.5rem]">
           <div className="ambient-line px-4 py-4 lg:px-5">
             <p className="section-kicker">Palestre</p>
             <h3 className="mt-2 text-xl font-semibold tracking-[-0.04em] text-app-text">Elenco sedi</h3>
+            <p className="mt-2 max-w-xl text-sm leading-6 text-app-muted">
+              Ogni card mostra subito clienti e numeri principali della singola palestra.
+            </p>
           </div>
 
           <div className="space-y-3 p-4 lg:p-5">
@@ -105,13 +111,13 @@ export default function Dashboard({ gyms, onAddGym, onNavigate }) {
 
               return (
                 <button
-                  className="surface-soft flex w-full flex-col gap-4 rounded-[1.25rem] px-4 py-4 text-left transition hover:bg-white/10"
+                  className="surface-soft flex w-full flex-col gap-4 rounded-[1.25rem] px-4 py-4 text-left transition hover:-translate-y-[1px] hover:border-app-line-strong hover:bg-white/90"
                   key={gym.id}
                   onClick={() => onNavigate(`gym-${gym.id}`)}
                   type="button"
                 >
                   <div className="flex items-center gap-3">
-                    <div className="flex h-11 w-11 items-center justify-center rounded-[0.95rem] bg-white/10 text-app-accent">
+                    <div className="flex h-11 w-11 items-center justify-center rounded-[0.95rem] bg-app-accent/12 text-app-accent">
                       <Building2 className="h-4 w-4" />
                     </div>
                     <div className="min-w-0">
@@ -129,13 +135,13 @@ export default function Dashboard({ gyms, onAddGym, onNavigate }) {
                     </div>
                     <div>
                       <p className="text-[0.68rem] uppercase tracking-[0.16em] text-app-muted">Netto</p>
-                      <p className="mt-1 text-sm font-semibold text-emerald-300">
+                      <p className="mt-1 text-sm font-semibold text-app-success">
                         {formatCurrency(totalsByGym.netto)}
                       </p>
                     </div>
                     <div>
                       <p className="text-[0.68rem] uppercase tracking-[0.16em] text-app-muted">IVA</p>
-                      <p className="mt-1 text-sm font-semibold text-amber-200">
+                      <p className="mt-1 text-sm font-semibold text-app-warning">
                         {formatCurrency(totalsByGym.iva)}
                       </p>
                     </div>

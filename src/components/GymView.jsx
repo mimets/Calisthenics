@@ -23,10 +23,10 @@ const FREQUENCY_OPTIONS = [
 ];
 
 const FREQUENCY_CLASSNAMES = {
-  mensile: 'bg-cyan-300/14 text-cyan-200',
-  trimestrale: 'bg-violet-300/14 text-violet-200',
-  semestrale: 'bg-amber-300/14 text-amber-200',
-  annuale: 'bg-emerald-300/14 text-emerald-200',
+  mensile: 'bg-sky-100 text-sky-700',
+  trimestrale: 'bg-violet-100 text-violet-700',
+  semestrale: 'bg-amber-100 text-amber-700',
+  annuale: 'bg-emerald-100 text-emerald-700',
 };
 
 function StatCard({ icon, label, value }) {
@@ -35,7 +35,7 @@ function StatCard({ icon, label, value }) {
   return (
     <div className="metric-strip rounded-[1.25rem] p-4">
       <div className="mb-3 flex items-center justify-between">
-        <div className="flex h-9 w-9 items-center justify-center rounded-[0.9rem] bg-white/10 text-app-accent">
+        <div className="flex h-9 w-9 items-center justify-center rounded-[0.9rem] bg-app-accent/12 text-app-accent">
           <IconComponent className="h-4 w-4" />
         </div>
         <span className="text-[0.68rem] uppercase tracking-[0.16em] text-app-muted">{label}</span>
@@ -170,7 +170,7 @@ function AddClientForm({ busy, gymId, onAdd }) {
 
 function ClientEditor({ busy, form, onCancel, onChange, onSave }) {
   return (
-    <div className="surface-soft grid gap-3 rounded-[1.25rem] border border-white/14 p-4 sm:grid-cols-2">
+    <div className="surface-soft grid gap-3 rounded-[1.25rem] border border-app-line p-4 sm:grid-cols-2">
       <div className="field-shell rounded-[1rem] px-4 py-3">
         <input
           autoFocus
@@ -278,7 +278,7 @@ function ClientList({ busy, clients, onDelete, onEdit }) {
             <div className="flex items-start justify-between gap-3">
               <div className="min-w-0">
                 <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-[0.9rem] bg-white/10 text-sm font-semibold uppercase text-app-accent">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-[0.9rem] bg-app-accent/12 text-sm font-semibold uppercase text-app-accent">
                     {client.firstName.slice(0, 1)}
                     {client.lastName.slice(0, 1)}
                   </div>
@@ -298,7 +298,7 @@ function ClientList({ busy, clients, onDelete, onEdit }) {
                   <Edit3 className="h-4 w-4" />
                 </button>
                 <button
-                  className="rounded-full border border-red-300/14 bg-red-400/10 p-2.5 text-red-200 transition hover:bg-red-400/16 disabled:opacity-60"
+                  className="rounded-full border border-red-200 bg-red-50 p-2.5 text-red-700 transition hover:bg-red-100 disabled:opacity-60"
                   disabled={busy}
                   onClick={() => onDelete(client.id)}
                   type="button"
@@ -315,11 +315,11 @@ function ClientList({ busy, clients, onDelete, onEdit }) {
               </div>
               <div>
                 <p className="text-[0.68rem] uppercase tracking-[0.16em] text-app-muted">Netto</p>
-                <p className="mt-1 text-sm font-semibold text-emerald-300">{formatCurrency(financials.netto)}</p>
+                <p className="mt-1 text-sm font-semibold text-app-success">{formatCurrency(financials.netto)}</p>
               </div>
               <div>
                 <p className="text-[0.68rem] uppercase tracking-[0.16em] text-app-muted">IVA</p>
-                <p className="mt-1 text-sm font-semibold text-amber-200">{formatCurrency(financials.iva)}</p>
+                <p className="mt-1 text-sm font-semibold text-app-warning">{formatCurrency(financials.iva)}</p>
               </div>
             </div>
           </article>
@@ -411,17 +411,17 @@ export default function GymView({
             )}
 
             <p className="mt-3 text-sm leading-6 text-app-muted">
-              Gestione semplice di clienti, quote e ripartizione economica.
+              Vista operativa della sede con ricerca rapida, quote e riepiloghi economici.
             </p>
           </div>
 
           <div className="w-full max-w-sm">
             {confirmDelete ? (
-              <div className="rounded-[1.15rem] border border-red-300/14 bg-red-400/10 px-4 py-4">
-                <p className="text-sm font-semibold text-red-100">Eliminare questa palestra?</p>
+              <div className="rounded-[1.15rem] border border-red-200 bg-red-50 px-4 py-4">
+                <p className="text-sm font-semibold text-red-700">Eliminare questa palestra?</p>
                 <div className="mt-3 flex gap-2">
                   <button
-                    className="rounded-full bg-red-300 px-4 py-3 text-sm font-semibold text-[#2b130f] disabled:opacity-60"
+                    className="rounded-full bg-red-600 px-4 py-3 text-sm font-semibold text-white disabled:opacity-60"
                     disabled={busy}
                     onClick={() => onDeleteGym(gym.id)}
                     type="button"
@@ -435,7 +435,7 @@ export default function GymView({
               </div>
             ) : (
               <button
-                className="button-secondary w-full rounded-[1.15rem] px-4 py-3 text-sm font-medium text-red-100"
+                className="button-secondary w-full rounded-[1.15rem] px-4 py-3 text-sm font-medium text-app-danger"
                 disabled={busy}
                 onClick={() => setConfirmDelete(true)}
                 type="button"
@@ -459,6 +459,9 @@ export default function GymView({
           <div>
             <p className="section-kicker">Clienti</p>
             <h3 className="mt-2 text-xl font-semibold tracking-[-0.04em] text-app-text">Lista clienti</h3>
+            <p className="mt-2 max-w-xl text-sm leading-6 text-app-muted">
+              Tutti i clienti della sede con filtro veloce e azioni dirette.
+            </p>
           </div>
 
           <div className="flex flex-col gap-3 lg:flex-row lg:items-center">
@@ -480,7 +483,7 @@ export default function GymView({
         <div className="mt-4">
           {gym.clients.length === 0 ? (
             <div className="surface-soft rounded-[1.25rem] px-5 py-8 text-center">
-              <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-[1rem] bg-white/10 text-app-accent">
+              <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-[1rem] bg-app-accent/12 text-app-accent">
                 <Users className="h-5 w-5" />
               </div>
               <h4 className="mt-4 text-lg font-semibold tracking-[-0.04em] text-app-text">Nessun cliente</h4>

@@ -26,16 +26,16 @@ export default function Login({ onLogin }) {
   return (
     <div className="relative flex min-h-screen items-center justify-center overflow-hidden px-4 py-6">
       <div className="absolute left-[-5rem] top-[-3rem] h-40 w-40 rounded-full bg-app-accent/20 blur-[70px] glow-drift" />
-      <div className="absolute bottom-[-4rem] right-[-4rem] h-44 w-44 rounded-full bg-emerald-300/12 blur-[80px] glow-drift" />
+      <div className="absolute bottom-[-4rem] right-[-4rem] h-44 w-44 rounded-full bg-amber-200/35 blur-[80px] glow-drift" />
 
       <div className="w-full max-w-md">
         <div className="mb-4 text-center">
-          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-[1.25rem] border border-white/12 bg-white/10 text-lg font-bold text-app-text backdrop-blur-xl">
+          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-[1.25rem] border border-app-line bg-white/80 text-lg font-bold text-app-text backdrop-blur-xl">
             HM
           </div>
           <h1 className="text-2xl font-semibold tracking-[-0.04em] text-app-text">Hermann Manager</h1>
           <p className="mt-2 text-sm leading-6 text-app-muted">
-            Accesso rapido al gestionale con una UI piu semplice e pulita.
+            Accesso rapido al gestionale con una interfaccia piu pulita, comoda e leggibile.
           </p>
         </div>
 
@@ -81,7 +81,7 @@ export default function Login({ onLogin }) {
             </label>
 
             {error && (
-              <div className="rounded-[1rem] border border-red-300/14 bg-red-400/10 px-4 py-3 text-sm text-red-200">
+              <div className="rounded-[1rem] border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
                 {error}
               </div>
             )}

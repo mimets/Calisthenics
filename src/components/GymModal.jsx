@@ -16,18 +16,18 @@ export default function GymModal({ busy, onClose, onSave }) {
 
   return (
     <div
-      className="fixed inset-0 z-[70] flex items-center justify-center bg-black/65 px-4 backdrop-blur-md"
+      className="fixed inset-0 z-[70] flex items-center justify-center bg-black/40 px-4 backdrop-blur-md"
       onClick={onClose}
       role="presentation"
     >
       <div
-        className="surface-panel raise-in w-full max-w-lg rounded-[2rem] border border-white/10"
+        className="surface-panel raise-in w-full max-w-lg rounded-[2rem] border border-app-line"
         onClick={(event) => event.stopPropagation()}
         role="dialog"
       >
         <div className="ambient-line flex items-start justify-between gap-4 px-6 py-5">
           <div className="flex items-center gap-4">
-            <div className="flex h-12 w-12 items-center justify-center rounded-[1.2rem] bg-app-accent/16 text-app-accent">
+            <div className="flex h-12 w-12 items-center justify-center rounded-[1.2rem] bg-app-accent/12 text-app-accent">
               <Building2 className="h-5 w-5" />
             </div>
             <div>
@@ -52,7 +52,7 @@ export default function GymModal({ busy, onClose, onSave }) {
           <label className="block space-y-2">
             <span className="text-xs font-semibold uppercase tracking-[0.18em] text-app-muted">Nome palestra</span>
             <div className="field-shell flex items-center gap-3 rounded-[1.25rem] px-4 py-3.5">
-              <div className="flex h-10 w-10 items-center justify-center rounded-[0.95rem] bg-white/[0.04] text-app-accent">
+              <div className="flex h-10 w-10 items-center justify-center rounded-[0.95rem] bg-app-accent/10 text-app-accent">
                 <Building2 className="h-4 w-4" />
               </div>
               <input
@@ -68,7 +68,7 @@ export default function GymModal({ busy, onClose, onSave }) {
 
           <div className="surface-soft mt-5 rounded-[1.35rem] px-4 py-4">
             <p className="text-sm leading-6 text-app-muted">
-              La sede verra aggiunta subito al menu laterale e potrai iniziare a inserire i clienti.
+              La sede verra aggiunta subito al menu laterale e potrai iniziare a inserire i clienti con un flusso essenziale.
             </p>
           </div>
 

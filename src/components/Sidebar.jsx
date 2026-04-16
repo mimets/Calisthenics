@@ -26,7 +26,7 @@ export default function Sidebar({ currentView, gyms, onNavigate, onLogout }) {
       <div className="fixed left-0 right-0 top-0 z-50 px-3 pt-3 lg:hidden">
         <div className="surface-panel flex items-center justify-between rounded-[1.35rem] px-4 py-3">
           <button className="flex items-center gap-3" onClick={() => handleNavigate('dashboard')} type="button">
-            <div className="flex h-10 w-10 items-center justify-center rounded-[0.95rem] bg-white/10 text-app-text">
+            <div className="flex h-10 w-10 items-center justify-center rounded-[0.95rem] bg-app-accent/12 text-app-text">
               <span className="text-sm font-bold tracking-[-0.06em]">HM</span>
             </div>
             <div className="text-left">
@@ -48,7 +48,7 @@ export default function Sidebar({ currentView, gyms, onNavigate, onLogout }) {
       {mobileOpen && (
         <button
           aria-label="Chiudi menu"
-          className="fixed inset-0 z-40 bg-black/28 backdrop-blur-sm lg:hidden"
+          className="fixed inset-0 z-40 bg-black/20 backdrop-blur-sm lg:hidden"
           onClick={() => setMobileOpen(false)}
           type="button"
         />
@@ -61,18 +61,18 @@ export default function Sidebar({ currentView, gyms, onNavigate, onLogout }) {
       >
         <div className="surface-panel flex h-full flex-col rounded-[1.7rem] p-4">
           <div className="hidden items-center gap-3 lg:flex">
-            <div className="flex h-11 w-11 items-center justify-center rounded-[1rem] bg-white/10 text-app-text">
+            <div className="flex h-11 w-11 items-center justify-center rounded-[1rem] bg-app-accent/12 text-app-text">
               <span className="text-sm font-bold tracking-[-0.06em]">HM</span>
             </div>
             <div>
               <p className="text-sm font-semibold text-app-text">Hermann Manager</p>
-              <p className="text-xs text-app-muted">Workspace mobile first</p>
+              <p className="text-xs text-app-muted">Workspace chiaro e ordinato</p>
             </div>
           </div>
 
-          <div className="mt-2 rounded-[1.25rem] border border-white/10 bg-white/5 px-3.5 py-3 lg:mt-5">
+          <div className="mt-2 rounded-[1.25rem] border border-app-line bg-white/55 px-3.5 py-3 lg:mt-5">
             <div className="flex items-center gap-3">
-              <div className="flex h-9 w-9 items-center justify-center rounded-[0.9rem] bg-app-accent/18 text-app-accent">
+              <div className="flex h-9 w-9 items-center justify-center rounded-[0.9rem] bg-app-accent/12 text-app-accent">
                 <Building2 className="h-4 w-4" />
               </div>
               <div>
@@ -98,8 +98,8 @@ export default function Sidebar({ currentView, gyms, onNavigate, onLogout }) {
                   <button
                     className={`flex w-full items-center gap-3 rounded-[1.15rem] px-3.5 py-3 text-left transition ${
                       isActive
-                        ? 'border border-white/14 bg-white/10 text-app-text'
-                        : 'text-app-muted hover:bg-white/7 hover:text-app-text'
+                        ? 'border border-app-line-strong bg-white/80 text-app-text'
+                        : 'text-app-muted hover:bg-white/60 hover:text-app-text'
                     }`}
                     key={item.id}
                     onClick={() => handleNavigate(item.id)}
@@ -107,7 +107,7 @@ export default function Sidebar({ currentView, gyms, onNavigate, onLogout }) {
                   >
                     <div
                       className={`flex h-9 w-9 items-center justify-center rounded-[0.9rem] ${
-                        isActive ? 'bg-app-accent/18 text-app-accent' : 'bg-white/7'
+                        isActive ? 'bg-app-accent/12 text-app-accent' : 'bg-white/50'
                       }`}
                     >
                       <Icon className="h-4 w-4" />
@@ -124,7 +124,7 @@ export default function Sidebar({ currentView, gyms, onNavigate, onLogout }) {
             onClick={onLogout}
             type="button"
           >
-            <div className="flex h-9 w-9 items-center justify-center rounded-[0.9rem] bg-white/7">
+            <div className="flex h-9 w-9 items-center justify-center rounded-[0.9rem] bg-white/50">
               <LogOut className="h-4 w-4" />
             </div>
             <span className="text-sm font-medium">Esci</span>
