@@ -14,5 +14,11 @@ services:
         sync: false
       - key: APP_PASSWORD
         sync: false
+      - key: APP_PASSWORD_HASH
+        sync: false
+      - key: APP_CORS_ORIGINS
+        value: http://localhost,capacitor://localhost,null
+      - key: APP_CROSS_ORIGIN_AUTH
+        value: true
       - key: DB_PATH
         value: /tmp/apphermann.json

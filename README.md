@@ -92,6 +92,7 @@ Note:
 - Android richiede Android Studio per compilare l'APK o l'AAB.
 - Windows genera un pacchetto Electron nella cartella `release/`.
 - Gli artefatti `release/` non vengono versionati nel repo.
+- Prima del packaging finale imposta `VITE_API_BASE_URL` verso il backend online.
 
 ## Deploy su Render
 
@@ -102,6 +103,8 @@ Serve configurare:
 - `APP_USERNAME`
 - `APP_PASSWORD` oppure `APP_PASSWORD_HASH`
 - `JWT_SECRET` viene generato automaticamente dal blueprint
+- `APP_CORS_ORIGINS` puo restare con i valori base per Android/Windows
+- `APP_CROSS_ORIGIN_AUTH=true` e gia previsto
 - `DB_PATH=/tmp/apphermann.json`
 
 Se crei il servizio manualmente:
@@ -110,3 +113,21 @@ Se crei il servizio manualmente:
 - Start Command: `npm start`
 - Health Check Path: `/api/health`
 - Env var `DB_PATH=/tmp/apphermann.json`
+
+## Cosa resta da fare
+
+La parte codice e wrapper e pronta. Restano solo questi passaggi operativi:
+
+1. Crea il servizio su Render partendo dal repo e inserisci username/password admin.
+2. Prendi l'URL del backend online e impostalo in `VITE_API_BASE_URL`.
+3. Ricompila le app:
+
+```bash
+npm run build:android
+npm run build:windows
+```
+
+4. Android: apri Android Studio con `npm run android:open` e genera l'APK.
+5. Windows: distribuisci l'eseguibile dentro `release/win-unpacked/`.
+
+Se in futuro vuoi una versione davvero stabile per il personale, il passo successivo consigliato e spostare i dati da file JSON a un database esterno persistente.
